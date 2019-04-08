@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 
-const Todo = props => {
-  const inputState = useState('');
+const Todo = () => {
+  const [todoName, onTodoNameChange] = useState('');
   const inputChangedHandler = event => {
-    inputState[1](event.target.value);
+    onTodoNameChange(event.target.value);
   };
   return (
     <React.Fragment>
       <input
         type="text"
         placeholder="Todo"
-        value={inputState[0]}
+        value={todoName}
         onChange={inputChangedHandler}
       />
       <button>Add Todo</button>
