@@ -21,7 +21,7 @@ const Todo = () => {
       .catch(error => {
         console.log(error);
       });
-  });
+  }, []);
   const inputChangedHandler = event => {
     onTodoNameChange(event.target.value);
   };
