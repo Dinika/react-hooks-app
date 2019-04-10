@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import AuthContext from '../AuthContext';
 
 const Header = props => {
+  const authContext = useContext(AuthContext);
   return (
     <React.Fragment>
-      <button onClick={props.switchToTodo}>Todo</button>
+      {authContext.status ? (
+        <button onClick={props.switchToTodo}>Todo</button>
+      ) : null}
       <button onClick={props.switchToAuth}>Auth</button>
     </React.Fragment>
   );
