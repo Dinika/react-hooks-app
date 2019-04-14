@@ -9,14 +9,12 @@ const Todo = () => {
     axios
       .get('https://todo-b8ab2.firebaseio.com/todos.json')
       .then(response => {
-        console.log(response);
         const todoData = response.data;
         const todos = [];
         for (let key in todoData) {
           todos.push(todoData[key].name);
         }
         onTodoAdded(todos);
-        console.log(todoList);
       })
       .catch(error => {
         console.log(error);
@@ -27,12 +25,14 @@ const Todo = () => {
   };
 
   const todoAddedHandler = () => {
-    onTodoAdded(todoList.concat(todoName));
     axios
       .post('https://todo-b8ab2.firebaseio.com/todos.json', {
         name: todoName
       })
       .then(response => {
+        setTimeout(function() {
+          onTodoAdded(prevTodoList => prevTodoList.concat(todoName));
+        }, 4000);
         console.log(response);
       })
       .catch(error => {
