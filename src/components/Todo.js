@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useReducer, useRef } from 'react';
+import List from './List';
 import axios from 'axios';
 
 const Todo = () => {
   const [todoList, dispatch] = useReducer(todoListReducer, []);
   const todoNameRef = useRef(null);
+
   function todoListReducer(state, action) {
     switch (action.type) {
       case 'SET':
@@ -30,11 +32,9 @@ const Todo = () => {
       })
       .catch(error => {
         console.log(error);
+        dispatch({ type: 'SET', payload: ['Yeah', 'Yo', 'Yep'] });
       });
   }, []);
-  const inputChangedHandler = event => {
-    console.log(todoNameRef.current.value);
-  };
 
   const todoAddedHandler = () => {
     const todoName = todoNameRef.current.value;
@@ -51,22 +51,15 @@ const Todo = () => {
       });
   };
 
+  const onTodoClick = index => {
+    dispatch({ type: 'SUBSTRACT', payload: index });
+  };
+
   return (
     <React.Fragment>
       <input type="text" placeholder="Todo" ref={todoNameRef} />
       <button onClick={todoAddedHandler}>Add Todo</button>
-      <ul>
-        {todoList.map((todo, index) => {
-          return (
-            <li
-              key={index}
-              onClick={() => dispatch({ type: 'SUBSTRACT', payload: index })}
-            >
-              {todo}
-            </li>
-          );
-        })}
-      </ul>
+      <List onTodoClick={onTodoClick} todoList={todoList} />
     </React.Fragment>
   );
 };
