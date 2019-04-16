@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useReducer } from 'react';
+import React, { useState, useEffect, useReducer, useRef } from 'react';
 import axios from 'axios';
 
 const Todo = () => {
-  const [todoName, onTodoNameChange] = useState('');
   const [todoList, dispatch] = useReducer(todoListReducer, []);
-
+  const todoNameRef = useRef(null);
   function todoListReducer(state, action) {
     switch (action.type) {
       case 'SET':
@@ -12,7 +11,7 @@ const Todo = () => {
       case 'ADD':
         return state.concat(action.payload);
       case 'SUBSTRACT':
-        return state.filter(todo => todo.id !== action.payload);
+        return state.filter((todo, index) => index !== action.payload);
       default:
         return state;
     }
@@ -34,18 +33,17 @@ const Todo = () => {
       });
   }, []);
   const inputChangedHandler = event => {
-    onTodoNameChange(event.target.value);
+    console.log(todoNameRef.current.value);
   };
 
   const todoAddedHandler = () => {
+    const todoName = todoNameRef.current.value;
     axios
       .post('https://todo-b8ab2.firebaseio.com/todos.json', {
         name: todoName
       })
       .then(response => {
-        setTimeout(function() {
-          dispatch({ type: 'ADD', payload: todoName });
-        }, 4000);
+        dispatch({ type: 'ADD', payload: todoName });
         console.log(response);
       })
       .catch(error => {
@@ -55,16 +53,18 @@ const Todo = () => {
 
   return (
     <React.Fragment>
-      <input
-        type="text"
-        placeholder="Todo"
-        value={todoName}
-        onChange={inputChangedHandler}
-      />
+      <input type="text" placeholder="Todo" ref={todoNameRef} />
       <button onClick={todoAddedHandler}>Add Todo</button>
       <ul>
         {todoList.map((todo, index) => {
-          return <li key={index}>{todo}</li>;
+          return (
+            <li
+              key={index}
+              onClick={() => dispatch({ type: 'SUBSTRACT', payload: index })}
+            >
+              {todo}
+            </li>
+          );
         })}
       </ul>
     </React.Fragment>
