@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useReducer, useRef, useMemo } from 'react';
+import { useInputValidityHook } from '../hooks/input';
 import List from './List';
 import axios from 'axios';
 
 const Todo = () => {
   const [todoList, dispatch] = useReducer(todoListReducer, []);
-  const todoNameRef = useRef(null);
-  const [isInputValid, setIsInputValid] = useState(false);
+  const { onInputChange, isInputValid, inputValue } = useInputValidityHook();
 
   function todoListReducer(state, action) {
     switch (action.type) {
@@ -37,7 +37,7 @@ const Todo = () => {
   }, []);
 
   const todoAddedHandler = () => {
-    const todoName = todoNameRef.current.value;
+    const todoName = inputValue;
     axios
       .post('https://todo-b8ab2.firebaseio.com/todos.json', {
         name: todoName
@@ -55,11 +55,11 @@ const Todo = () => {
     dispatch({ type: 'SUBSTRACT', payload: index });
   };
 
-  const checkInputValidation = event => {
-    const input = event.target.value;
-    const isValid = input.trim() === '' ? false : true;
-    setIsInputValid(isValid);
-  };
+  // const checkInputValidation = event => {
+  //   const input = event.target.value;
+  //   const isValid = input.trim() === '' ? false : true;
+  //   setIsInputValid(isValid);
+  // };
 
   const renderTodoList = () => (
     <List onTodoClick={onTodoClick} todoList={todoList} />
@@ -70,8 +70,7 @@ const Todo = () => {
       <input
         type="text"
         placeholder="Todo"
-        ref={todoNameRef}
-        onChange={checkInputValidation}
+        onChange={onInputChange}
         style={{ background: isInputValid ? 'transparent' : 'red' }}
       />
       <button onClick={todoAddedHandler}>Add Todo</button>
